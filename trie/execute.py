@@ -176,7 +176,7 @@ def my_execute(query, idx_stat):
             if satisfies:
                 valid_years.add(year)
 
-        print(valid_years)
+        # print(valid_years)
 
         # For each valid year, traverse its trie based on name predicate
         for (year, trie) in idx_stat['year_trie_list']:
@@ -188,12 +188,13 @@ def my_execute(query, idx_stat):
                     start = node.disklocstart
                     end = node.disklocstart + node.cnt - 1
                     matching_disk_indices.extend(range(start, end + 1))
-                    print(matching_disk_indices)
+                    # print(ma/tching_disk_indices)
             elif op == 'LIKE':
                 if value.endswith('%'):
                     prefix = value[:-1]
                     node = trie.traverse(prefix)
                     if node and node.disklocstart != -1 and node.disklocend != -1:
+                        # print(year, range(node.disklocstart, node.disklocend + 1))
                         matching_disk_indices.extend(range(node.disklocstart, node.disklocend + 1))
                         # print(matching_disk_indices)
                 else:

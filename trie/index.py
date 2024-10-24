@@ -97,6 +97,20 @@ class Trie:
                 # print("hey")
                 return None
         return node
+    
+    def print_all_strings_with_frequencies(self):
+        """
+        Print all strings stored in the trie along with their frequencies.
+        """
+        def dfs(node, prefix):
+            if node.cnt > 0:
+                print(f"{prefix}: {node.cnt}")
+            for i in range(26):
+                if node.links[i]:
+                    ch = chr(i + ord('a'))
+                    dfs(node.links[i], prefix + ch)
+
+        dfs(self.root, "")
 
 
 def my_index(data):
@@ -148,6 +162,7 @@ def my_index(data):
 
     # Build per-year tries for conjunctive queries (disk locations 0 to n-1)
     year_trie_list = []
+    i = 0
     for year in unique_years:
         # Extract records for the current year, sorted by name
         records_for_year = [t for t in sorted_by_year_name if t[2] == year]
@@ -156,12 +171,18 @@ def my_index(data):
         # Initialize a new trie for this year
         trie = Trie()
         for idx, record in enumerate(records_for_year_sorted):
-            print(record)
+            # print(i + idx, record)
             name = record[1].lower()
-            diskloc = idx  # 0 to n-1 within year_trie
+            diskloc = idx + i # 0 to n-1 within year_trie
             trie.insert(name, diskloc)
         # Append the (year, trie) tuple
+        # print(year)
+        # trie.print_all_strings_with_frequencies()
+        # print()
         year_trie_list.append((year, trie))
+        i += len(records_for_year)
+        
+    
 
     # Store indexing statistics
     idx_stat = {
