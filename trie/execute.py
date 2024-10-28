@@ -84,7 +84,7 @@ def my_execute(query, idx_stat):
                     if idx + 1 < len(idx_stat['year_sorted_list']):
                         end = idx_stat['year_sorted_list'][idx + 1][1] - 1
                     else:
-                        end = len(idx_stat['disk']) // 2 - 1  # n-1
+                        end = idx_stat['disk_len'] // 2 - 1  # n-1
                     matching_disk_indices.extend(range(start, end + 1))
             elif op == '<':
                 # Find all years less than val
@@ -96,7 +96,7 @@ def my_execute(query, idx_stat):
                             if idx + 1 < len(idx_stat['year_sorted_list']):
                                 end = idx_stat['year_sorted_list'][idx + 1][1] - 1
                             else:
-                                end = len(idx_stat['disk']) // 2 - 1  # n-1
+                                end = idx_stat['disk_len'] // 2 - 1  # n-1
                             matching_disk_indices.extend(range(disklocstart, end + 1))
             elif op == '<=':
                 # Find all years less than or equal to val
@@ -108,7 +108,7 @@ def my_execute(query, idx_stat):
                             if idx + 1 < len(idx_stat['year_sorted_list']):
                                 end = idx_stat['year_sorted_list'][idx + 1][1] - 1
                             else:
-                                end = len(idx_stat['disk']) // 2 - 1  # n-1
+                                end = idx_stat['disk_len'] // 2 - 1  # n-1
                             matching_disk_indices.extend(range(disklocstart, end + 1))
             elif op == '>':
                 # Find all years greater than val
@@ -120,7 +120,7 @@ def my_execute(query, idx_stat):
                             if idx + 1 < len(idx_stat['year_sorted_list']):
                                 end = idx_stat['year_sorted_list'][idx + 1][1] - 1
                             else:
-                                end = len(idx_stat['disk']) // 2 - 1  # n-1
+                                end = idx_stat['disk_len'] // 2 - 1  # n-1
                             matching_disk_indices.extend(range(disklocstart, end + 1))
             elif op == '>=':
                 # Find all years greater than or equal to val
@@ -132,7 +132,7 @@ def my_execute(query, idx_stat):
                             if idx + 1 < len(idx_stat['year_sorted_list']):
                                 end = idx_stat['year_sorted_list'][idx + 1][1] - 1
                             else:
-                                end = len(idx_stat['disk']) // 2 - 1  # n-1
+                                end = idx_stat['disk_len'] // 2 - 1  # n-1
                             matching_disk_indices.extend(range(disklocstart, end + 1))
 
     # Handle conjunctive queries (both name and year predicates)
@@ -208,7 +208,7 @@ def my_execute(query, idx_stat):
         # Map the disk locations from 0 to n-1 back to the main disk list
         # final_disk_indices = []
         # for diskloc in matching_disk_indices:
-        #     if 0 <= diskloc < len(idx_stat['disk']) // 2:
+        #     if 0 <= diskloc < idx_stat['disk_len'] // 2:
         #         final_disk_indices.append(diskloc)
         # final_disk_indices.sort()
         # return final_disk_indices
@@ -223,7 +223,7 @@ def my_execute(query, idx_stat):
     #     # Name-only queries: disklocs from n to 2n-1
     #     final_disk_indices = []
     #     for diskloc in matching_disk_indices:
-    #         if len(idx_stat['disk']) // 2 <= diskloc < len(idx_stat['disk']):
+    #         if idx_stat['disk_len'] // 2 <= diskloc < idx_stat['disk_len']:
     #             final_disk_indices.append(diskloc)
     #     final_disk_indices.sort()
     #     return final_disk_indices
@@ -231,7 +231,7 @@ def my_execute(query, idx_stat):
     #     # Year-only queries: disklocs from 0 to n-1
     #     final_disk_indices = []
     #     for diskloc in matching_disk_indices:
-    #         if 0 <= diskloc < len(idx_stat['disk']) // 2:
+    #         if 0 <= diskloc < idx_stat['disk_len'] // 2:
     #             final_disk_indices.append(diskloc)
     #     final_disk_indices.sort()
     #     return final_disk_indices

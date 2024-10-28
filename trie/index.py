@@ -186,7 +186,7 @@ def my_index(data):
 
     # Store indexing statistics
     idx_stat = {
-        'disk': disk,  # List of ids sorted by year & name and then by name
+        'disk_len': len(disk),  # List of ids sorted by year & name and then by name
         'min_year': min_year,
         'max_year': max_year,
         'year_sorted_list': year_sorted_list,  # List of (year, disklocstart)
