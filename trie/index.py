@@ -76,10 +76,8 @@ class Trie:
                 node.set_disklocend(diskloc)
             else:
                 
-                # prev = node
                 node = node.get(ch)
                 node.set_disklocend(diskloc)
-                # node.set_disklocstart(prev.disklocstart)
         node.increase_end()
         
 
@@ -90,11 +88,9 @@ class Trie:
         """
         node = self.root
         for ch in word:
-            # print(ch)
             if node.contains_key(ch):
                 node = node.get(ch)
             else:
-                # print("hey")
                 return None
         return node
     
@@ -111,6 +107,7 @@ class Trie:
                     dfs(node.links[i], prefix + ch)
 
         dfs(self.root, "")
+
 
 
 def my_index(data):
