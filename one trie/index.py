@@ -15,7 +15,7 @@ class Node:
         # Array to store links to child nodes (26 lowercase letters)
         self.links = [None] * 26
         # Array of year bucket
-        self.buckets = [Bucket()] * 201
+        self.buckets = [None] * 201
 
         # data stored for global trie
         self.disklocstart = -1
@@ -129,8 +129,9 @@ class Trie:
         node = self.root
         for ch in name:
             # print(ch)
-            if node.buckets[year-1900].disklocstart == -1:
-                node.buckets[year-1900].disklocstart == diskloc                
+            if node.buckets[year-1900] is None:
+                node.buckets[year-1900] = Bucket()
+                node.buckets[year-1900].disklocstart = diskloc                
             node.buckets[year-1900].disklocend = diskloc
 
             if node.contains_key(ch):
@@ -141,8 +142,9 @@ class Trie:
                 break
         
         # last node
-        if node.buckets[year-1900].disklocstart == -1:
-            node.buckets[year-1900].disklocstart == diskloc
+        if node.buckets[year-1900] is None:
+            node.buckets[year-1900] = Bucket()
+            node.buckets[year-1900].disklocstart = diskloc                
         node.buckets[year-1900].disklocend = diskloc
         node.buckets[year-1900].cnt += 1
 

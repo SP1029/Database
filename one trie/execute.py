@@ -142,33 +142,40 @@ def my_execute(query, idx_stat):
         value = value.strip("'\"").lower()
 
         # Extract year predicates
-        year_ops = year_predicates  # List of tuples (op, val)
+        # year_ops = year_predicates  # List of tuples (op, val)
 
-        # Find all years that satisfy all year predicates
-        valid_years = set()
-        for year in range (1900, 2101):
-            satisfies = True
-            for (yop, val) in year_ops:
-                if yop == '=':
-                    if year != val:
-                        satisfies = False
-                        break
-                elif yop == '<=':
-                    if not (year <= val):
-                        satisfies = False
-                        break
-                elif yop == '>=':
-                    if not (year >= val):
-                        satisfies = False
-                        break
-                else:
-                    # Unsupported operator
-                    satisfies = False
-                    break
-            if satisfies:
-                valid_years.add(year)
+        (yop, val) = year_predicates[0]
+        if yop == "=":
+            valid_years = [val]
+        elif yop == "<=":
+            valid_years = [y for y in range(1900, val+1)]
+        elif yop == ">=":
+            valid_years = [y for y in range(val, 2101)]
+        # # Find all years that satisfy all year predicates
+        # valid_years = set()
+        # for year in range (1900, 2101):
+        #     satisfies = True
+        #     for (yop, val) in year_ops:
+        #         if yop == '=':
+        #             if year != val:
+        #                 satisfies = False
+        #                 break
+        #         elif yop == '<=':
+        #             if not (year <= val):
+        #                 satisfies = False
+        #                 break
+        #         elif yop == '>=':
+        #             if not (year >= val):
+        #                 satisfies = False
+        #                 break
+        #         else:
+        #             # Unsupported operator
+        #             satisfies = False
+        #             break
+        #     if satisfies:
+        #         valid_years.add(year)
 
-        
+        # print(len(valid_years))
 
         
         
@@ -176,22 +183,26 @@ def my_execute(query, idx_stat):
             node = idx_stat['global_trie'].traverse(value)
             for year in valid_years:
                 buck = node.buckets[year-1900]
-                if  buck.cnt > 0:
-                    start = buck.disklocstart
-                    end = start + buck.cnt - 1
-                    matching_disk_indices.extend(range(start, end + 1))
+                if  (buck is not None):
+                    if buck.cnt > 0:
+                        start = buck.disklocstart
+                        end = start + buck.cnt - 1
+                        matching_disk_indices.extend(range(start, end + 1))
                     # print(ma/tching_disk_indices)
         elif op == 'LIKE':
             prefix = value[:-1]
             node = idx_stat['global_trie'].traverse(prefix)
+            # print("here1")
             for year in valid_years:
                 try:
                     buck = node.buckets[year-1900]
                 except Exception as e:
                     print(year)
                     raise e
-                if buck.disklocstart != -1 and buck.disklocend != -1:
+                # print("here2 ", year)
+                if buck is not None:
                     # print(year, range(node.disklocstart, node.disklocend + 1))
+                    # print("here3", year, buck.disklocstart, buck.disklocend)
                     matching_disk_indices.extend(range(buck.disklocstart, buck.disklocend + 1))
                     # print(matching_disk_indices)
                 
