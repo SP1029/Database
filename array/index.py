@@ -31,8 +31,7 @@ class StringIndex:
             end_ix = len(self.data)-1
         left = self.binary_search_left(name, start_ix, end_ix)
         right = self.binary_search_right(name, start_ix, end_ix)
-        temp = [ix + self.offset for ix in range(left, right)]
-        return [ix + self.offset for ix in range(left, right)]
+        return left  + self.offset, right  + self.offset - 1
        
     def get_prefix_match(self, prefix, start_ix=-1, end_ix=-1):
         if start_ix==-1:
@@ -40,8 +39,7 @@ class StringIndex:
             end_ix = len(self.data)-1
         left = self.binary_search_left(prefix, start_ix, end_ix)
         right = self.binary_search_right(prefix.ljust(10,'z'), start_ix, end_ix)
-        temp = [ix + self.offset for ix in range(left, right)]
-        return [ix + self.offset for ix in range(left, right)]
+        return left + self.offset, right + self.offset - 1
 
 class ArrayIndex(StringIndex):
     def __init__(self, tuples, offset):
@@ -64,8 +62,6 @@ class ArrayIndex(StringIndex):
             if self.end_ix[i]!=-1:
                 self.present[i] = True
                 
-        print(self.present)
-        
         data = [t[1] for t in tuples]
         StringIndex.__init__(self, data, offset)
         
@@ -75,7 +71,8 @@ class ArrayIndex(StringIndex):
         if self.present[year_ix]:
             start_ix = self.start_ix[year_ix]
             end_ix = self.end_ix[year_ix]
-            return self.get_prefix_match(prefix, start_ix, end_ix)
+            ans = self.get_prefix_match(prefix, start_ix, end_ix)
+            return ans
         else:
             return []
     
@@ -85,7 +82,8 @@ class ArrayIndex(StringIndex):
         if self.present[year_ix]:
             start_ix = self.start_ix[year_ix]
             end_ix = self.end_ix[year_ix]
-            return self.get_name_match(name, start_ix, end_ix)
+            ans = self.get_name_match(name, start_ix, end_ix)
+            return ans
         else:
             return []
         

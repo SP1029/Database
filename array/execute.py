@@ -36,13 +36,16 @@ def my_execute(query, idx_stat):
         op, value = name_predicate
         value = value.strip("'\"").lower()
         if op == '=':
-            matching_disk_indices = idx_stat['strIdx'].get_name_match(value)
+            start, end = idx_stat['strIdx'].get_name_match(value)
+            matching_disk_indices.extend(range(start, end + 1))
         elif op == 'LIKE':
             if value.endswith('%'):
                 prefix = value[:-1]
-                matching_disk_indices = idx_stat['strIdx'].get_prefix_match(prefix)
+                start, end = idx_stat['strIdx'].get_prefix_match(prefix)
+                matching_disk_indices.extend(range(start, end + 1))
             else:
-                matching_disk_indices = idx_stat['strIdx'].get_name_match(value)
+                start, end = idx_stat['strIdx'].get_name_match(value)
+                matching_disk_indices.extend(range(start, end + 1))
 
     # Handle year-only queries
     elif is_year and not is_name:
@@ -123,17 +126,18 @@ def my_execute(query, idx_stat):
             if satisfies:
                 valid_years.add(year)
 
-        for year in idx_stat['year_list']:
-            if year not in valid_years:
-                continue
+        for year in valid_years:
             if op == '=':
-                idx_stat['arrIdx'].get_name_match_year(year, value)
+                start, end = idx_stat['arrIdx'].get_name_match_year(year, value)
+                matching_disk_indices.extend(range(start, end + 1))
             elif op == 'LIKE':
                 if value.endswith('%'):
                     prefix = value[:-1]
-                    idx_stat['arrIdx'].get_prefix_match_year(year, prefix)
+                    start, end = idx_stat['arrIdx'].get_prefix_match_year(year, prefix)
+                    matching_disk_indices.extend(range(start, end + 1))
                 else:
-                    idx_stat['arrIdx'].get_name_match_year(year, value)
+                    start, end = idx_stat['arrIdx'].get_name_match_year(year, value)
+                    matching_disk_indices.extend(range(start, end + 1))
                     
     else:
         # Unsupported query type or no predicates

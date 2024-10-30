@@ -7,6 +7,7 @@
 |---------------|----------------------------------------------------------------------------------|---------------|-----------|-----------|-------------|---------|---------|-------|
 | Binary Search | [GitHub Link](https://github.com/shrilakshmisk/CS315-A1/tree/main/assn1)         | 0.2281367667  | 300000    | 2861000   | 3.787527567 | 6400303 | 1400713 | 1     |
 | Trie          | [GitHub Link](https://github.com/shrilakshmisk/CS315-A1/tree/main/trie)          | 3.812614667   | 200000    | 19770894  | 0.035879767 | 2227760 | 1400713 | 1     |
+| Array         | [GitHub Link](https://github.com/shrilakshmisk/CS315-A1/tree/main/array)         | 0.736580000   | 200000    | 1662898   | 0.930382966 | 2752003 | 1400708 | 1     | 
 
 ### For only years query
 
