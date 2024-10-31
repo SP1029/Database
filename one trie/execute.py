@@ -146,12 +146,22 @@ def my_execute(query, idx_stat):
         min_year = idx_stat['min_year']
         max_year = idx_stat['max_year']
         (yop, val) = year_predicates[0]
+        # if yop == "=":
+        #     valid_years = [val]
+        # elif yop == "<=":
+        #     valid_years = [y for y in range(min_year, min(max_year,val)+1)]
+        # elif yop == ">=":
+        #     valid_years = [y for y in range(max(min_year,val), max_year+1)]
+
         if yop == "=":
-            valid_years = [val]
+            ystart = val
+            yend = val
         elif yop == "<=":
-            valid_years = [y for y in range(min_year, min(max_year,val)+1)]
+            ystart = min_year
+            yend = min(max_year,val) 
         elif yop == ">=":
-            valid_years = [y for y in range(max(min_year,val), max_year+1)]
+            ystart = max(min_year,val)
+            yend = max_year
         # # Find all years that satisfy all year predicates
         # valid_years = set()
         # for year in range (1900, 2101):
@@ -182,30 +192,41 @@ def my_execute(query, idx_stat):
         
         if op == '=' or (op == 'LIKE' and not value.endswith('%')):
             node = idx_stat['global_trie'].traverse(value)
-            for year in valid_years:
-                buck = node.buckets[year-min_year]
-                if  (buck is not None):
-                    if buck.cnt > 0:
-                        start = buck.disklocstart
-                        end = start + buck.cnt - 1
-                        matching_disk_indices.extend(range(start, end + 1))
+            # for year in valid_years:
+            #     buck = node.buckets[year-min_year]
+            #     if  (buck is not None):
+            #         if buck.cnt > 0:
+            #             start = buck.disklocstart
+            #             end = start + buck.cnt - 1
+            #             matching_disk_indices.extend(range(start, end + 1))
                     # print(ma/tching_disk_indices)
+            for buck in node.buckets:
+                if buck.year < ystart: continue
+                if buck.year > yend: break
+                if buck.cnt > 0:
+                    start = buck.disklocstart
+                    end = start + buck.cnt - 1
+                    matching_disk_indices.extend(range(start, end + 1))
         elif op == 'LIKE':
             prefix = value[:-1]
             node = idx_stat['global_trie'].traverse(prefix)            
             # print("here1")
-            for year in valid_years:
-                try:
-                    buck = node.buckets[year-min_year]
-                except Exception as e:
-                    print(year, yop, val)
-                    raise e
-                # print("here2 ", year)
-                if buck is not None:
-                    # print(year, range(node.disklocstart, node.disklocend + 1))
-                    # print("here3", year, buck.disklocstart, buck.disklocend)
-                    matching_disk_indices.extend(range(buck.disklocstart, buck.disklocend + 1))
-                    # print(matching_disk_indices)
+            # for year in valid_years:
+            #     try:
+            #         buck = node.buckets[year-min_year]
+            #     except Exception as e:
+            #         print(year, yop, val)
+            #         raise e
+            #     # print("here2 ", year)
+            #     if buck is not None:
+            #         # print(year, range(node.disklocstart, node.disklocend + 1))
+            #         # print("here3", year, buck.disklocstart, buck.disklocend)
+            #         matching_disk_indices.extend(range(buck.disklocstart, buck.disklocend + 1))
+            #         # print(matching_disk_indices)
+            for buck in node.buckets:
+                if buck.year < ystart: continue
+                if buck.year > yend: break
+                matching_disk_indices.extend(range(buck.disklocstart, buck.disklocend + 1))
                 
 
         # Map the disk locations from 0 to n-1 back to the main disk list

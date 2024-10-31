@@ -1,8 +1,9 @@
 # index.py
 class Bucket():
-    def __init__(self):
-        self.disklocstart = -1
-        self.disklocend = -1
+    def __init__(self, year, diskloc):
+        self.year = year
+        self.disklocstart = diskloc
+        self.disklocend = diskloc
         # Counter for number of words that end at this node
         self.cnt = 0
 
@@ -11,11 +12,11 @@ class Node:
     Define a class for each node in the trie.
     """
 
-    def __init__(self, min_year, max_year):
+    def __init__(self):
         # Array to store links to child nodes (26 lowercase letters)
         self.links = [None] * 26
         # Array of year bucket
-        self.buckets = [None] * (max_year - min_year + 1)
+        self.buckets = []
 
         # data stored for global trie
         self.disklocstart = -1
@@ -74,7 +75,7 @@ class Trie:
         """
         Constructor to initialize the trie with an empty root node.
         """
-        self.root = Node(min_year, max_year)
+        self.root = Node()
         self.min_year = min_year
         self.max_year = max_year
 
@@ -85,7 +86,7 @@ class Trie:
         node = self.root
         for ch in word:
             if not node.contains_key(ch):
-                node.put(ch, Node(self.min_year, self.max_year))
+                node.put(ch, Node())
                 node = node.get(ch)
                 node.set_disklocstart(diskloc)
                 node.set_disklocend(diskloc)
@@ -131,10 +132,15 @@ class Trie:
         node = self.root
         for ch in name:
             # print(ch)
-            if node.buckets[year-self.min_year] is None:
-                node.buckets[year-self.min_year] = Bucket()
-                node.buckets[year-self.min_year].disklocstart = diskloc                
-            node.buckets[year-self.min_year].disklocend = diskloc
+            # if node.buckets[year-self.min_year] is None:
+            #     node.buckets[year-self.min_year] = Bucket()
+            #     node.buckets[year-self.min_year].disklocstart = diskloc                
+            # node.buckets[year-self.min_year].disklocend = diskloc
+
+            if len(node.buckets)==0 or node.buckets[-1].year!=year:
+                node.buckets.append(Bucket(year, diskloc))
+            else:
+                node.buckets[-1].disklocend = diskloc
 
             if node.contains_key(ch):
                 node = node.get(ch)
@@ -144,11 +150,11 @@ class Trie:
                 break
         
         # last node
-        if node.buckets[year-self.min_year] is None:
-            node.buckets[year-self.min_year] = Bucket()
-            node.buckets[year-self.min_year].disklocstart = diskloc                
-        node.buckets[year-self.min_year].disklocend = diskloc
-        node.buckets[year-self.min_year].cnt += 1
+        if len(node.buckets)==0 or node.buckets[-1].year!=year:
+                node.buckets.append(Bucket(year, diskloc))
+        else:
+            node.buckets[-1].disklocend = diskloc
+        node.buckets[-1].cnt += 1
 
 
 
