@@ -153,8 +153,10 @@ class Trie:
             child, _ = self._find_child(node, current_char)
 
             if child:
+                print("hey")
                 label = child.edge_label
-                if word.startswith(label, idx):
+                print(label)
+                if self._common_prefix_length(word, idx, label) == len(word)-idx:
                     node = child
                     idx += len(label)
                 else:
