@@ -487,15 +487,15 @@ class Trie:
         # print("Hey ", word)
         while idx < len(word):
             current_char = word[idx]
-            # print(idx, current_char)
+            print(idx, current_char)
             # print([i.edge_label for i in node.children])
             child, _ = self._find_child(node, current_char)
             # print(child.edge_label)
 
             if child:
                 label = child.edge_label
-                # print("hey", label)
-                if self._common_prefix_length(word, idx, label) > 0:
+                print("hey", label)
+                if label.startswith(word, idx):
                     node = child
                     common_length = self._common_prefix_length(word, idx, label)
                     idx += common_length
@@ -529,11 +529,9 @@ class Trie:
             # print(child.edge_label)
 
             if child:
-                # print("hey")
+                print("hey")
                 label = child.edge_label
-                if label == word[idx:]:
-                    return child.disklocstart, child.cnt
-                elif word.startswith(label, idx):
+                if word.startswith(label, idx):
                     node = child
                     idx += len(label)
                 else:
@@ -671,7 +669,7 @@ def my_index(data):
     for idx, record in enumerate(sorted_by_name):
         name = record[1].lower()
         diskloc = len(sorted_by_year_name) + idx  # n to 2n-1
-        # print(name, diskloc, record)
+        print(name, diskloc, record)
         global_trie.insert(name, diskloc)
 
     # Build per-year tries for conjunctive queries (disk locations 0 to n-1)
@@ -690,7 +688,7 @@ def my_index(data):
             name = record[1].lower()
             diskloc = idx + i # 0 to n-1 within year_trie
             trie.insert(name, diskloc)
-            # print(name, diskloc, record)
+            print(name, diskloc, record)
         # Append the (year, trie) tuple
         # print(year)
         # trie.print_all_strings_with_frequencies()
