@@ -11,11 +11,11 @@ class Node:
     Define a class for each node in the trie.
     """
 
-    def __init__(self):
+    def __init__(self, min_year, max_year):
         # Array to store links to child nodes (26 lowercase letters)
         self.links = [None] * 26
         # Array of year bucket
-        self.buckets = [None] * 201
+        self.buckets = [None] * (max_year - min_year + 1)
 
         # data stored for global trie
         self.disklocstart = -1
@@ -70,11 +70,13 @@ class Trie:
     Define a class for the trie data structure.
     """
 
-    def __init__(self):
+    def __init__(self, min_year=1900, max_year=2100):
         """
         Constructor to initialize the trie with an empty root node.
         """
-        self.root = Node()
+        self.root = Node(min_year, max_year)
+        self.min_year = min_year
+        self.max_year = max_year
 
     def insert(self, word, diskloc):
         """
@@ -83,7 +85,7 @@ class Trie:
         node = self.root
         for ch in word:
             if not node.contains_key(ch):
-                node.put(ch, Node())
+                node.put(ch, Node(self.min_year, self.max_year))
                 node = node.get(ch)
                 node.set_disklocstart(diskloc)
                 node.set_disklocend(diskloc)
@@ -129,10 +131,10 @@ class Trie:
         node = self.root
         for ch in name:
             # print(ch)
-            if node.buckets[year-1900] is None:
-                node.buckets[year-1900] = Bucket()
-                node.buckets[year-1900].disklocstart = diskloc                
-            node.buckets[year-1900].disklocend = diskloc
+            if node.buckets[year-self.min_year] is None:
+                node.buckets[year-self.min_year] = Bucket()
+                node.buckets[year-self.min_year].disklocstart = diskloc                
+            node.buckets[year-self.min_year].disklocend = diskloc
 
             if node.contains_key(ch):
                 node = node.get(ch)
@@ -142,11 +144,11 @@ class Trie:
                 break
         
         # last node
-        if node.buckets[year-1900] is None:
-            node.buckets[year-1900] = Bucket()
-            node.buckets[year-1900].disklocstart = diskloc                
-        node.buckets[year-1900].disklocend = diskloc
-        node.buckets[year-1900].cnt += 1
+        if node.buckets[year-self.min_year] is None:
+            node.buckets[year-self.min_year] = Bucket()
+            node.buckets[year-self.min_year].disklocstart = diskloc                
+        node.buckets[year-self.min_year].disklocend = diskloc
+        node.buckets[year-self.min_year].cnt += 1
 
 
 
@@ -178,7 +180,7 @@ def my_index(data):
     years = [t[2] for t in data]
     min_year = min(years)
     max_year = max(years)
-
+    # print(min_year, max_year)
     # Build year_sorted_list: sorted list of (year, disklocstart)
     unique_years = sorted(set(years))
     year_sorted_list = []
@@ -190,7 +192,7 @@ def my_index(data):
                 break
 
     # Build global trie for name-only queries (disk locations n to 2n-1)
-    global_trie = Trie()
+    global_trie = Trie(min_year, max_year)
     n = len(sorted_by_name_year)
     for idx, record in enumerate(sorted_by_name_year):
         name = record[1].lower()

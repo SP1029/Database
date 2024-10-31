@@ -143,14 +143,15 @@ def my_execute(query, idx_stat):
 
         # Extract year predicates
         # year_ops = year_predicates  # List of tuples (op, val)
-
+        min_year = idx_stat['min_year']
+        max_year = idx_stat['max_year']
         (yop, val) = year_predicates[0]
         if yop == "=":
             valid_years = [val]
         elif yop == "<=":
-            valid_years = [y for y in range(1900, val+1)]
+            valid_years = [y for y in range(min_year, min(max_year,val)+1)]
         elif yop == ">=":
-            valid_years = [y for y in range(val, 2101)]
+            valid_years = [y for y in range(max(min_year,val), max_year+1)]
         # # Find all years that satisfy all year predicates
         # valid_years = set()
         # for year in range (1900, 2101):
@@ -182,7 +183,7 @@ def my_execute(query, idx_stat):
         if op == '=' or (op == 'LIKE' and not value.endswith('%')):
             node = idx_stat['global_trie'].traverse(value)
             for year in valid_years:
-                buck = node.buckets[year-1900]
+                buck = node.buckets[year-min_year]
                 if  (buck is not None):
                     if buck.cnt > 0:
                         start = buck.disklocstart
@@ -191,13 +192,13 @@ def my_execute(query, idx_stat):
                     # print(ma/tching_disk_indices)
         elif op == 'LIKE':
             prefix = value[:-1]
-            node = idx_stat['global_trie'].traverse(prefix)
+            node = idx_stat['global_trie'].traverse(prefix)            
             # print("here1")
             for year in valid_years:
                 try:
-                    buck = node.buckets[year-1900]
+                    buck = node.buckets[year-min_year]
                 except Exception as e:
-                    print(year)
+                    print(year, yop, val)
                     raise e
                 # print("here2 ", year)
                 if buck is not None:
