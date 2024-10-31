@@ -11,6 +11,7 @@
 | One Trie      | [GitHub Link](https://github.com/shrilakshmisk/CS315-A1/tree/main/one%20trie)    |2.3308658666 | 200000 | 13788002 | 0.028946199 | 2227760 | 1400713 | 1   |
 | One Trie Space Optimized | [GitHub Link](https://github.com/shrilakshmisk/CS315-A1/tree/main/one%20trie%20space%20optimized) | 2.32173420 | 200000 | 13788175 | 0.026583533 | 2227760 | 1400713 | 1 |
 | Trie Compression | [GitHub Link](https://github.com/shrilakshmisk/CS315-A1/tree/main/trie%20compression) | 3.2062207666 | 200000 | 7502228 | 0.0376125999 | 2227760 | 1400713 | 1 |
+| One Trie Compression | [GitHub Link](https://github.com/shrilakshmisk/CS315-A1/tree/main/one%20trie%20compression) | 3.0678317333 | 200000 | 10040106 | 0.0447875333 | 2227760 | 1400713 | 1 |
 
 
 
