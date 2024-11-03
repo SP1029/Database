@@ -40,8 +40,11 @@ class NumBuckets:
             return []
         
     def get_le(self,year):
-        if not (self.MIN_YEAR <= year and year<=self.MAX_YEAR):
+        if not (self.MIN_YEAR <= year):
             return []
+        
+        if year > self.MAX_YEAR:
+            year = self.MAX_YEAR
         
         year_ix = year - self.MIN_YEAR
         
@@ -51,8 +54,11 @@ class NumBuckets:
             return []
     
     def get_ge(self,year):
-        if not (self.MIN_YEAR <= year and year<=self.MAX_YEAR):
+        if not (year<=self.MAX_YEAR):
             return []
+        
+        if year < self.MIN_YEAR:
+            year = self.MIN_YEAR
         
         year_ix = year - self.MIN_YEAR
         
@@ -61,7 +67,7 @@ class NumBuckets:
         else:
             return []
         
-class Bucket():
+class Bucket:
     def __init__(self, year, diskloc):
         self.year = year
         self.disklocstart = diskloc
@@ -85,11 +91,8 @@ class Node:
 
 
 class Trie:
-
-    def __init__(self, min_year=1900, max_year=2100):
+    def __init__(self):
         self.root = Node()
-        self.min_year = min_year
-        self.max_year = max_year
 
     def insert(self, word, diskloc):
         node = self.root
