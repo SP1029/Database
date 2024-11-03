@@ -1,3 +1,54 @@
+def binary_search_left(buckets, ystart):
+    """
+    Finds the first index in `buckets` where buck.year >= ystart.
+    """
+    left, right = 0, len(buckets)
+    while left < right:
+        mid = (left + right) // 2
+        if buckets[mid].year < ystart:
+            left = mid + 1
+        else:
+            right = mid
+    return left
+
+def binary_search_right(buckets, yend):
+    """
+    Finds the first index in `buckets` where buck.year > yend.
+    """
+    left, right = 0, len(buckets)
+    while left < right:
+        mid = (left + right) // 2
+        if buckets[mid].year <= yend:
+            left = mid + 1
+        else:
+            right = mid
+    return left
+
+def get_years_in_range_exact(node,ystart,yend):
+    ans = []
+    buckets = node.buckets
+    start_idx = binary_search_left(buckets, ystart)
+    end_idx = binary_search_right(buckets, yend)
+    for buck in buckets[start_idx:end_idx]:
+        if buck.cnt > 0:
+            start = buck.disklocstart
+            end = start + buck.cnt - 1
+            ans.extend(range(start, end + 1))
+    return ans
+
+def get_years_in_range(node,ystart,yend):
+    ans = []
+    buckets = node.buckets
+    start_idx = binary_search_left(buckets, ystart)
+    end_idx = binary_search_right(buckets, yend)
+    for buck in buckets[start_idx:end_idx]:
+        if buck.cnt > 0:
+            start = buck.disklocstart
+            end = buck.disklocend
+            ans.extend(range(start, end + 1))
+    return ans
+
+
 def my_execute(clause, idx):
     
     ans = []
@@ -67,21 +118,12 @@ def my_execute(clause, idx):
             
         if n_op == '=' or (n_op == 'LIKE' and not n_value.endswith('%')):
             node = idx.global_trie.traverse(n_value)
-            for buck in node.buckets:
-                if buck.year < ystart: continue
-                if buck.year > yend: break
-                if buck.cnt > 0:
-                    start = buck.disklocstart
-                    end = start + buck.cnt - 1
-                    ans.extend(range(start, end + 1))
+            ans.extend(get_years_in_range_exact(node,ystart,yend))
                     
         elif n_op == 'LIKE':
             prefix = n_value[:-1]
             node = idx.global_trie.traverse(prefix)            
-            for buck in node.buckets:
-                if buck.year < ystart: continue
-                if buck.year > yend: break
-                ans.extend(range(buck.disklocstart, buck.disklocend + 1))
+            ans.extend(get_years_in_range(node,ystart,yend))
                 
         ans = idx.checker.process(ans)
         
