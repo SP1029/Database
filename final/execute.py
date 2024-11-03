@@ -133,21 +133,23 @@ def my_execute(clause, idx):
             
         if n_op == '=' or (n_op == 'LIKE' and not n_value.endswith('%')):
             node = idx.global_trie.traverse(n_value)
-            for buck in node.buckets:
-                if buck.year < ystart: continue
-                if buck.year > yend: break
-                if buck.cnt > 0:
-                    start = buck.disklocstart
-                    end = start + buck.cnt - 1
-                    ans.extend(range(start, end + 1))
+            if node:
+                for buck in node.buckets:
+                    if buck.year < ystart: continue
+                    if buck.year > yend: break
+                    if buck.cnt > 0:
+                        start = buck.disklocstart
+                        end = start + buck.cnt - 1
+                        ans.extend(range(start, end + 1))
                     
         elif n_op == 'LIKE':
             prefix = n_value[:-1]
-            node = idx.global_trie.traverse(prefix)            
-            for buck in node.buckets:
-                if buck.year < ystart: continue
-                if buck.year > yend: break
-                ans.extend(range(buck.disklocstart, buck.disklocend + 1))
+            node = idx.global_trie.traverse(prefix)
+            if node:            
+                for buck in node.buckets:
+                    if buck.year < ystart: continue
+                    if buck.year > yend: break
+                    ans.extend(range(buck.disklocstart, buck.disklocend + 1))
                 
         ans = idx.checker.process(ans)
         
