@@ -161,11 +161,13 @@ class Checker:
             return indexes
 
 class Index:
-    def __init__(self, ix1_to_ix2, global_trie, num_buckets):
+    def __init__(self, ix1_to_ix2, global_trie, num_buckets, min_year, max_year):
         self.checker = Checker(ix1_to_ix2)
         self.count_tuples = len(ix1_to_ix2)
         self.global_trie = global_trie
         self.num_buckets = num_buckets
+        self.min_year = min_year
+        self.max_year = max_year
 
 def my_index( tuples ):
     
@@ -190,6 +192,10 @@ def my_index( tuples ):
     year_to_name_disk_ix = sorted(year_to_name_disk_ix, key=lambda x: x[0])
     ix1_to_ix2 = [t[1] for t in year_to_name_disk_ix]
     
+    # min and max years
+    min_year = int(sorted_by_year_name[0][2])
+    max_year = int(sorted_by_year_name[-1][2])
+
     # Global Trie
     global_trie = Trie()
     for idx, record in enumerate(sorted_by_name_year):
@@ -204,6 +210,6 @@ def my_index( tuples ):
         global_trie.set_year_wise_locs(name, year, diskloc)
     
     # Index
-    idx_stat = Index(ix1_to_ix2, global_trie, num_buckets)
+    idx_stat = Index(ix1_to_ix2, global_trie, num_buckets, min_year, max_year)
     
     return disk, idx_stat
