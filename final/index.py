@@ -61,119 +61,58 @@ class NumBuckets:
         else:
             return []
         
-# index.py
 class Bucket():
     def __init__(self, year, diskloc):
         self.year = year
         self.disklocstart = diskloc
         self.disklocend = diskloc
-        # Counter for number of words that end at this node
         self.cnt = 0
 
 class Node:
-    """
-    Define a class for each node in the trie.
-    """
-
     def __init__(self):
-        # Array to store links to child nodes (26 lowercase letters)
         self.links = [None] * 26
-        # Array of year bucket
         self.buckets = []
 
-        # data stored for global trie
         self.disklocstart = -1
         self.disklocend = -1
-        # Counter for number of words that end at this node
         self.cnt = 0
 
     def contains_key(self, ch):
-        """
-        Check if the node contains a specific key.
-        """
-        try:
-            return self.links[ord(ch) - ord('a')] is not None
-        except Exception as e:
-            print(ch)
-            raise e
+        return self.links[ord(ch) - ord('a')] is not None
 
     def get(self, ch):
-        """
-        Get the child node corresponding to a key.
-        """
         return self.links[ord(ch) - ord('a')]
-
-    def put(self, ch, node):
-        """
-        Insert a child node with a specific key.
-        """
-        self.links[ord(ch) - ord('a')] = node
-
-    def increase_end(self):
-        """
-        Increment the count of words that end at this node.
-        """
-        self.cnt += 1
-
-    def set_disklocstart(self, loc):
-        """
-        Set the disklocstart for this node.
-        """
-        if self.disklocstart == -1:
-            self.disklocstart = loc
-
-    def set_disklocend(self, loc):
-        """
-        Set the disklocend for this node.
-        """
-        self.disklocend = loc
 
 
 class Trie:
-    """
-    Define a class for the trie data structure.
-    """
 
     def __init__(self, min_year=1900, max_year=2100):
-        """
-        Constructor to initialize the trie with an empty root node.
-        """
         self.root = Node()
         self.min_year = min_year
         self.max_year = max_year
 
     def insert(self, word, diskloc):
-        """
-        Insert a word into the trie with its disk location.
-        """
         node = self.root
         for ch in word:
             if not node.contains_key(ch):
-                node.put(ch, Node())
+                node.links[ord(ch) - ord('a')] = Node()
                 node = node.get(ch)
-                node.set_disklocstart(diskloc)
-                node.set_disklocend(diskloc)
+                node.disklocstart = diskloc
+                node.disklocend = diskloc
             else:
                 
-                # prev = node
                 node = node.get(ch)
-                node.set_disklocend(diskloc)
-                # node.set_disklocstart(prev.disklocstart)
-        node.increase_end()
+                node.disklocend = diskloc
+                
+        node.cnt+=1
         
 
     def traverse(self, word):
-        """
-        Traverse the trie to the end of the given word or prefix.
-        Returns the node if found, else None.
-        """
         node = self.root
         for ch in word:
-            # print(ch)
             if node.contains_key(ch):
                 node = node.get(ch)
             else:
-                # print("hey")
                 return None
         return node
     
@@ -187,10 +126,6 @@ class Trie:
 
             if node.contains_key(ch):
                 node = node.get(ch)
-            else:
-                # should not reach here
-                print ("something is wrong!")
-                break
         
         # last node
         if len(node.buckets)==0 or node.buckets[-1].year!=year:
